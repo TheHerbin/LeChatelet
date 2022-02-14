@@ -258,5 +258,8 @@
     },
     "symfony/yaml": {
         "version": "v5.4.3"
+    },
+    "twig/twig": {
+        "version": "v3.0.0"
     }
 }
