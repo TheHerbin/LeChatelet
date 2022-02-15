@@ -27,7 +27,6 @@ class LoginController extends AbstractController
      */
     public function index(UtilisateurRepository $utilisateurRepository): Response
     {
-
         return $this->render('login/index.html.twig', [
             'controller_name' => 'LoginController',
         ]);
