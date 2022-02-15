@@ -1,0 +1,15 @@
+# See the configuration reference at https://symfony.com/bundles/SchebTwoFactorBundle/5.x/configuration.html
+scheb_two_factor:
+  google:
+    enabled: true
+    server_name: Server Name # Server name used in QR code
+    issuer: Issuer Name # Issuer name used in QR code
+    digits: 6 # Number of digits in authentication code
+    window: 1 # How many codes before/after the current one would be accepted as valid
+    template: security/2fa_form.html.twig
+  security_tokens:
+    - Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken
+    # If you're using guard-based authentication, you have to use this one:
+    # - Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken
+    # If you're using authenticator-based security (introduced in Symfony 5.1), you have to use this one:
+    # - Symfony\Component\Security\Http\Authenticator\Token\PostAuthenticationToken
