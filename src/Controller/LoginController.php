@@ -27,8 +27,6 @@ class LoginController extends AbstractController
      */
     public function index(UtilisateurRepository $utilisateurRepository): Response
     {
-
-
         return $this->render('login/index.html.twig', [
             'controller_name' => 'LoginController',
         ]);
@@ -63,3 +61,19 @@ class LoginController extends AbstractController
         return new Response($result->getString(), 200, ['Content-Type' => 'image/png']);
     }
 }
+
+ 
+
+#Requete lDAP --> Regarde sur l'ad que l'utilisateur existe 
+
+#L'utilisateur est sur la page d'acceuil (Page d'accueil) 
+
+# Première connexion d'un utilisateur (front) 
+    #L'utilisateur renseigne c'est identifiants dans 2 champs
+    #(back)    #Requête LDAP isUserExist(email) : return true/false , si l'émail de connexion existe dans l'active directory 
+    #(bdd linux) Requete sql pour recup la table du bon user (lié a l'émail), on vérifie le mdp + navigateur + ip?? --> ok login sucess
+      #nav ou ip pas bon --> google auth
+#Si il existe pas on reload la meme page avec un message d'erreur
+
+
+#cas mdp bon et username --> Google auth 
