@@ -24,19 +24,10 @@ class Utilisateur implements TwoFactorInterface
     private ?string $googleAuthenticatorSecret;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $pseudo;
-
-    /**
      * @ORM\Column(type="string", length=255)
      */
     private $email;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $passwd;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -74,17 +65,6 @@ class Utilisateur implements TwoFactorInterface
         return $this->id;
     }
 
-    public function getPseudo(): ?string
-    {
-        return $this->pseudo;
-    }
-
-    public function setPseudo(?string $pseudo): self
-    {
-        $this->pseudo = $pseudo;
-
-        return $this;
-    }
 
     public function getEmail(): ?string
     {
@@ -94,18 +74,6 @@ class Utilisateur implements TwoFactorInterface
     public function setEmail(string $email): self
     {
         $this->email = $email;
-
-        return $this;
-    }
-
-    public function getPasswd(): ?string
-    {
-        return $this->passwd;
-    }
-
-    public function setPasswd(string $passwd): self
-    {
-        $this->passwd = $passwd;
 
         return $this;
     }
