@@ -45,6 +45,11 @@ class Utilisateur implements TwoFactorInterface
         return null !== $this->googleAuthenticatorSecret;
     }
 
+    public function getGoogleAuthenticatorUsername(): string
+    {
+        return $this->pseudo;
+    }
+
     public function getGoogleAuthenticatorSecret(): ?string
     {
         return $this->googleAuthenticatorSecret;
