@@ -1,43 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello MaintenanceController!{% endblock %}
-
+{% block title %}{{parent()}} Maintenance{% endblock %}
+{% block stylesheets %} {{parent()}} {% endblock %}
+{% block navbar %} {{parent()}} {% endblock %}
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">Acceuil</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-  
-      <div class="collapse navbar-collapse" id="navbarColor03">
-        <ul class="navbar-nav me-auto">
-          <li class="nav-item">
-            <a class="nav-link active" href="#">Acceuil
-              <span class="visually-hidden">(current)</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Medecin</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Infos Pratiques</a>
-          </li>
-          
-        </ul>
-        <form class="d-flex" data-dashlane-rid="7c3addb0ab3ace37" data-form-type="">
-            <input class="form-control me-sm-2" type="text" placeholder="Search" data-dashlane-rid="4d599532583608ee" data-form-type="">
-            <button class="btn btn-secondary my-2 my-sm-0" type="submit" data-dashlane-rid="662a2b5fe1e56d3f" data-dashlane-label="true" data-form-type="">Search</button>
-          </form>
-      </div>
-    </div>
-  </nav>
+
+
 <h1>Le Site est actuellement en maintenance</h1>
 <p>Pour plus d'information veuillez appellé le 03 20 34 56 88</p>
 {% endblock %}
