@@ -4,12 +4,10 @@
 {% endblock %}
 
 {% block body %}
-
-	<form action="{{ path('login') }}" method="post">
 		<div class="container">
 			<div class="row justify-content-center">
 	
-				<form action="#" method="post" enctype="application/x-www-form-urlencoded">
+				<form action="{{ path('login') }}" method="post" enctype="application/x-www-form-urlencoded">
 					<fieldset>
 						<legend>Connexion</legend>
 						<div class="form-group row"></div>
@@ -28,5 +26,4 @@
 				</form>
 			</div>
 		</div>
-	</form>
 {% endblock %}
