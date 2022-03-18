@@ -1,11 +1,4 @@
 security:
-  providers:
-    ldap_users:
-      id: App\Security\CustomLdapUserProvider
-
-  firewalls:
-    main:
-      provider: ldap_users
 
   enable_authenticator_manager: true
   # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
@@ -14,6 +7,7 @@ security:
   # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
   providers:
     users_in_memory: { memory: null }
+
   firewalls:
     dev:
       pattern: ^/(_(profiler|wdt)|css|images|js)/

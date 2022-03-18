@@ -2689,16 +2689,16 @@
         },
         {
             "name": "spomky-labs/otphp",
-            "version": "v10.0.2",
+            "version": "v10.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Spomky-Labs/otphp.git",
-                "reference": "cd6b57baf37e2551cfb6d8706201c153e5ac1a4d"
+                "reference": "9784d9f7c790eed26e102d6c78f12c754036c366"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Spomky-Labs/otphp/zipball/cd6b57baf37e2551cfb6d8706201c153e5ac1a4d",
-                "reference": "cd6b57baf37e2551cfb6d8706201c153e5ac1a4d",
+                "url": "https://api.github.com/repos/Spomky-Labs/otphp/zipball/9784d9f7c790eed26e102d6c78f12c754036c366",
+                "reference": "9784d9f7c790eed26e102d6c78f12c754036c366",
                 "shasum": ""
             },
             "require": {
@@ -2758,9 +2758,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Spomky-Labs/otphp/issues",
-                "source": "https://github.com/Spomky-Labs/otphp/tree/v10.0.2"
+                "source": "https://github.com/Spomky-Labs/otphp/tree/v10.0.3"
             },
-            "time": "2022-02-15T08:38:37+00:00"
+            "time": "2022-03-17T08:00:35+00:00"
         },
         {
             "name": "symfony/apache-pack",
