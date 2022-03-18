@@ -28,45 +28,54 @@ class LoginController extends AbstractController
     public function index(UtilisateurRepository $utilisateurRepository): Response
     {
         
+        
         $form = array();
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST'){
-            
-            $form['valide'] = true;
-            $email = $_POST['email'];
-            $mdp = $_POST['mdp'];
-            
-            $ip = null;
-            //Code pour connecter l'ad
-            //if présence dans l'annuaire AD ici
-
-            //if yes 
-                $utilisateur = $utilisateurRepository->findOneByEmail($email);
-                print_r($utilisateur);
-                //Comparaison des MDP hashés via l'ad
-                 
-                //Code pour récup l'ip en fonction du proxy : 
-                if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-                    $ip = $_SERVER['HTTP_CLIENT_IP'];
-                } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-                    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-                } else {
-                    $ip = $_SERVER['REMOTE_ADDR'];
-                }
-                //if $utilisateur->navigateur || $utilisateur->ip !== $ip
-                //if yes
-                    //Lancer vérification authentificator QR code si non enregistré ou demander code si enregistré en DB
-
-                //if no
-                    //Rediriger vers l'accueil avec les variables session pour permettre l'affichage des infos utilisateurs.
-            
-            //if no 
-
-            //blacklist IP
-        }
+            $ldap_dn = "dc=clinique,dc=chatelet,dc=com";
+            $ldap_password = "";
+            $ldap_con = ldap_connect("192.168.1.59");
         
 
+            if(ldap_bind($ldap_con, $ldap_dn, $ldap_password)){
+                echo 'Bind Success';
 
+            
+                $form['valide'] = true;
+                $email = $_POST['email'];
+                $mdp = $_POST['mdp'];
+                
+                $ip = null;
+                //Code pour connecter l'ad
+                //if présence dans l'annuaire AD ici
+
+                //if yes 
+                    $utilisateur = $utilisateurRepository->findOneByEmail($email);
+                    print_r($utilisateur);
+                    //Comparaison des MDP hashés via l'ad
+                    
+                    //Code pour récup l'ip en fonction du proxy : 
+                    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+                        $ip = $_SERVER['HTTP_CLIENT_IP'];
+                    } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+                        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+                    } else {
+                        $ip = $_SERVER['REMOTE_ADDR'];
+                    }
+                    //if $utilisateur->navigateur || $utilisateur->ip !== $ip
+                    //if yes
+                        //Lancer vérification authentificator QR code si non enregistré ou demander code si enregistré en DB
+
+                    //if no
+                        //Rediriger vers l'accueil avec les variables session pour permettre l'affichage des infos utilisateurs.
+                
+                //if no 
+
+                //blacklist IP
+            }
+        
+
+        }
         return $this->render('login/index.html.twig', [
             'controller_name' => 'LoginController',
         ]);
