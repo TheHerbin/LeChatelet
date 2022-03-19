@@ -47,4 +47,14 @@ class UtilisateurRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    /*
+    *   Parameter @String
+    *   returns @Utitlisateur
+    */
+    public function findOneByEmail($email)
+    {
+        $unUtilisateur = $this->findBy(array("email"=>$email));
+        return $unUtilisateur;
+    }
 }

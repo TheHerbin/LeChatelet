@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	{{parent()}}
+	Login
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<div class="row justify-content-center">
+
+			<p>Enregistrement double authentification</p>
+			<p>Lancer l'application google auth sur votre smarthphone et enregistrer le
+				<a href="/login/qr/{{id}}" target="_blank">QR CODE</a><br>
+
+				Après avoir enregistrer votre qr code
+				<a href="/verif/{{id}}">Cliquer ici</a>pour vous connectez.
+			</p>
+		</div>
+	</div>
+{% endblock %}

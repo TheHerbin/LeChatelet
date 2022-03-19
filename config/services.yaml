@@ -5,6 +5,15 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
 
+    app_ldap_host_default: my-server
+    app_ldap_port_default: 389
+    app_ldap_encryption_default: tls
+
+    env(APP_LDAP_HOST): '%env(default:app_ldap_host_default:LDAP_HOST)%'
+    env(APP_LDAP_PORT): '%env(default:app_ldap_port_default:LDAP_PORT)%'
+    env(APP_LDAP_ENCRYPTION): '%env(default:app_ldap_encryption_default:LDAP_ENCRYPTION)%'
+
+
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -22,3 +31,15 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+     # LDAP configuration
+    Symfony\Component\Ldap\Ldap:
+        arguments: ['@Symfony\Component\Ldap\Adapter\ExtLdap\Adapter']
+    Symfony\Component\Ldap\Adapter\ExtLdap\Adapter:
+        arguments:
+            -   host: '%env(resolve:APP_LDAP_HOST)%'
+                port: '%env(resolve:APP_LDAP_PORT)%'
+                encryption: '%env(resolve:APP_LDAP_ENCRYPTION)%'
+                options:
+                    protocol_version: 3
+                    referrals: false
