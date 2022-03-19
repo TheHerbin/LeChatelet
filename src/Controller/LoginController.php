@@ -30,7 +30,6 @@ class LoginController extends AbstractController
 
         $form = array();
 
-
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $ldap_dn = "dc=clinique,dc=chatelet,dc=com";
             $ldap_password = "";
@@ -57,13 +56,8 @@ class LoginController extends AbstractController
                 //Comparaison des MDP hashés via l'ad
 
                 //Code pour récup l'ip en fonction du proxy : 
-                if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-                    $ip = $_SERVER['HTTP_CLIENT_IP'];
-                } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-                    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-                } else {
-                    $ip = $_SERVER['REMOTE_ADDR'];
-                }
+                $ip = getIPAddress();
+
                 // if $utilisateur->navigateur || $utilisateur->ip !== $ip
                 // if yes
                 // Lancer vérification authentificator QR code si non enregistré ou demander code si enregistré en DB
@@ -78,6 +72,11 @@ class LoginController extends AbstractController
 
                         $user = new Utilisateur();
                         $user->setEmail($request->request->get('email'));
+
+                        //On initialise dans la bdd le navigateur par default
+                        $user->setNavigateur(get_browser_name($_SERVER['HTTP_USER_AGENT']));
+
+                        $user->setIp(getIPAddress());
 
                         // tell Doctrine you want to (eventually) save the Product (no queries yet)
                         $entityManager->persist($user);
@@ -117,6 +116,37 @@ class LoginController extends AbstractController
     }
 }
 
+
+//Return le navigateur utilisé par l'utilisateur
+function get_browser_name($user_agent)
+{
+    $t = strtolower($user_agent);
+    $t = " " . $t;
+    if (strpos($t, 'opera') || strpos($t, 'opr/')) return 'Opera';
+    elseif (strpos($t, 'edge')) return 'Edge';
+    elseif (strpos($t, 'chrome')) return 'Chrome';
+    elseif (strpos($t, 'safari')) return 'Safari';
+    elseif (strpos($t, 'firefox')) return 'Firefox';
+    elseif (strpos($t, 'msie') || strpos($t, 'trident/7')) return 'Internet Explorer';
+    return 'Unkown';
+}
+
+function getIPAddress()
+{
+    //whether ip is from the share internet  
+    if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+        $ip = $_SERVER['HTTP_CLIENT_IP'];
+    }
+    //whether ip is from the proxy  
+    elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    }
+    //whether ip is from the remote address  
+    else {
+        $ip = $_SERVER['REMOTE_ADDR'];
+    }
+    return $ip;
+}  
  
 
 #Requete lDAP --> Regarde sur l'ad que l'utilisateur existe 
@@ -132,3 +162,12 @@ class LoginController extends AbstractController
 
 
 #cas mdp bon et username --> Google auth 
+
+//MAILER
+/*
+
+
+SI le navigateur est 
+
+
+*/
