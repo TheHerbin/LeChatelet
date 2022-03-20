@@ -26,6 +26,7 @@ class LoginController extends AbstractController
      */
     public function index(UtilisateurRepository $utilisateurRepository, Request $request, ManagerRegistry $doctrine, MailerService $mailer): Response
     {
+
         $ldap_dn = "dc=clinique,dc=chatelet,dc=com";
         $ldap_password = "";
         $ldap_tree = "OU=SBSUsers,OU=Users,OU=MyBusiness,DC=myDomain,DC=local";
@@ -80,6 +81,15 @@ class LoginController extends AbstractController
 
                 // if $utilisateur->navigateur || $utilisateur->ip !== $ip
                 if ($ip !== $utilisateur->getIp() || $navigateur !== $utilisateur->getNavigateur()) {
+                    if ($ip !== $utilisateur->getIp() && $navigateur == $utilisateur->getNavigateur()) {
+                        //Envoi d'un mail d'avertissement
+                        $mailer->sendEmail("<h1>Une connection via un pc différent de d\'habitude à votre compte go secury à etait enregistré </h1>", "Nouvelle connection avec une ip differente", $utilisateur->getEmail());
+                    }
+                    if ($navigateur !== $utilisateur->getNavigateur()) {
+                        //Envoi mail verification
+                        $mailer->sendEmail("<h1>Une connection via un navigateur différent de d\'habitude à votre compte go secury à etait enregistré veuiller confirmer qu\'il s\'agit bien de vous </h1> <br> Via l\'url suivant: https://localhost/verif/" + $utilisateur->getId(), "Nouvelle connection avec un navigateur different", $utilisateur->getEmail());
+                        //Redirection vers ou?
+                    }
                     // if yes
                     // Lancer vérification authentificator QR code si non enregistré ou demander code si enregistré en DB
 
