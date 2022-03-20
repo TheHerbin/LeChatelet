@@ -4,7 +4,7 @@ MSPR administrer et sécuriser
 #INSTALLATION# 
 
 
-Après installation , penser à faire un composer install, créer une copie du .env.local et et remplacer la ligne DATABASE_URL par cette ligne : 
+Après installation , penser à faire un composer install, créer une copie du .env et nommez la .env.local et remplacer la ligne DATABASE_URL par cette ligne : 
 DATABASE_URL="mysql://root@127.0.0.1:3306/leChatelet?serverVersion=mariadb-10.4.11"
 
 Par la suite, éxécuter cette commande dans un terminal :
