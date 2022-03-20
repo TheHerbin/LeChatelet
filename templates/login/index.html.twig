@@ -2,12 +2,12 @@
 
 {% block title %} {{parent()}} Login
 {% endblock %}
-
+{% block navbar %} {{ parent() }} {% endblock navbar %}
 {% block body %}
+	{% if isLogged == false %}
 		<div class="container">
 			<div class="row justify-content-center">
-	
-				<form action="/" method="post" enctype="application/x-www-form-urlencoded">
+				<form action="{{ path("login") }}" method="post" enctype="application/x-www-form-urlencoded">
 					<fieldset>
 						<legend>Connexion</legend>
 						<div class="form-group row"></div>
@@ -19,11 +19,14 @@
 							<label for="Password">Mot de passe *</label>
 							<input class="form-control" id="Password" name="mdp" placeholder="Mot de passe" type="password">
 						</div>
-						
-	
+						<br />
+
 						<button type="submit" name="valider" class="btn btn-primary">Envoyer</button>
 					</fieldset>
 				</form>
 			</div>
 		</div>
+	{% else %}
+		<meta http-equiv="Refresh" content="0; url=/LeChatelet/public/home"/>
+	{% endif %}
 {% endblock %}

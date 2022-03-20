@@ -26,48 +26,63 @@ class LoginController extends AbstractController
      */
     public function index(UtilisateurRepository $utilisateurRepository, Request $request, ManagerRegistry $doctrine, MailerService $mailer): Response
     {
+        $ldap_dn = "dc=clinique,dc=chatelet,dc=com";
+        $ldap_password = "";
+        $ldap_tree = "OU=SBSUsers,OU=Users,OU=MyBusiness,DC=myDomain,DC=local";
+        $ldap_con = ldap_connect("192.168.1.59");
 
-        // dump($request->request->get('email'));
+        ldap_set_option($ldap_con, LDAP_OPT_PROTOCOL_VERSION, 3) or die('Unable to set LDAP protocol version');
+        ldap_set_option($ldap_con, LDAP_OPT_REFERRALS, 0);
+        try {
+            ldap_bind($ldap_con, $ldap_dn, $ldap_password);
+        } catch (\Exception $e) {
+            return $this->redirectToRoute('maintenance');
+        }
 
         $form = array();
         // $mailMsg = $mailer->sendEmail();
         // exit();
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $ldap_dn = "dc=clinique,dc=chatelet,dc=com";
-            $ldap_password = "";
-            $ldap_con = ldap_connect("192.168.1.59");
 
-            dump($ldap_con);
+            //Code pour connecter l'ad
 
-
-            if (ldap_bind($ldap_con, $ldap_dn, $ldap_password)) {
+            if (TRUE === ldap_bind($ldap_con, $ldap_dn, $ldap_password)) {
                 echo 'Bind Success';
-
+                /*   $search_filter = '(cn=)';
+                        $attributes = array();
+                        $attributes[] = 'givenname';
+                        $attributes[] = 'mail';
+                        $attributes[] = 'sn';
+                        $result = ldap_search($ldap_con, $ldap_dn, $search_filter, $attributes);
+                        $entries = ldap_get_entries($ldap_connection, $result);
+        
+                        print_r($result);
+                        print_r($entries);
+                        */
 
                 $form['valide'] = true;
                 $email = $_POST['email'];
                 $mdp = $_POST['mdp'];
 
                 $ip = null;
-                //Code pour connecter l'ad
+
                 //if présence dans l'annuaire AD ici
-
+                //A FAIRE
                 //if yes 
-                $utilisateur = $utilisateurRepository->findOneByEmail($email);
-                print_r($utilisateur);
-                //Comparaison des MDP hashés via l'ad
+                //récup de l'user ciblé
+                $utilisateur = $utilisateurRepository->findOneByEmail($request->request->get('email'))[0];
+                //Comparaison des MDP hashés via l'ad et email
 
-                //Code pour récup l'ip en fonction du proxy : 
+                //Code pour récup l'ip et navigateur en fonction du proxy/ VPN : 
                 $ip = getIPAddress();
+                $navigateur = get_browser_name($_SERVER['HTTP_USER_AGENT']);
 
                 // if $utilisateur->navigateur || $utilisateur->ip !== $ip
-                // if yes
-                // Lancer vérification authentificator QR code si non enregistré ou demander code si enregistré en DB
+                if ($ip !== $utilisateur->getIp() || $navigateur !== $utilisateur->getNavigateur()) {
+                    // if yes
+                    // Lancer vérification authentificator QR code si non enregistré ou demander code si enregistré en DB
 
-                //VERIFICATION QR CODE
-
-                if ($request->request->get('email')) {
                     $utilisateur = $utilisateurRepository->findOneByEmail($request->request->get('email'));
                     if ($utilisateur == null) {
                         //Il n'y a pas d'utilisateur donc en en ajoute un dans la bdd
@@ -102,19 +117,28 @@ class LoginController extends AbstractController
                             return $this->redirectToRoute('app_verif', ['id' => $utilisateur[0]->getId()]);
                         }
                     }
+                } else {
+                    $_SESSION['USER'] = true;
+                    $isLoggedIn = $_SESSION['USER'];
+                    return $this->render('home/index.html.twig', array(
+                        'controller_name' => 'HomeController',
+                        'isLogged' => $isLoggedIn
+                    ));
                 }
-
-
                 // if no
                 // Rediriger vers l'accueil avec les variables session pour permettre l'affichage des infos utilisateurs.
 
                 // if no 
-
+                //return $this->redirect('https://google.fr');
                 // blacklist IP
+            } else {
+                return $this->redirectToRoute('maintenance');
             }
         }
+        $isLoggedIn = isset($_SESSION['USER']);
         return $this->render('login/index.html.twig', [
             'controller_name' => 'LoginController',
+            'isLogged' => $isLoggedIn
         ]);
     }
 }

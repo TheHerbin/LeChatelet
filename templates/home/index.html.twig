@@ -1,12 +1,18 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Accueil{% endblock %}
-{% block navbar %} {{parent()}} {% endblock %}
-{% block body %}
+      {% block title %}{{ parent() }} Accueil{% endblock title %}
+      {% block navbar %} {{ parent() }} {% endblock navbar %}
+      {% block body %}
+        {% if isLogged == true %}
 
-  <h3>Gerer vos Patient</h3>
-<p>Dans le cadre de l’épidémie COVID-19, l’organisation de établissement a été modifiée afin de sécuriser la prise en charge de vos patient.</p>
-<h1>Pour mieux vous accompagner</h1>
-<p>Afin de mieux vous accompagner, il est possible d'appellé le 03 20 13 34 56</p>
-<p>Ou de telecharger l'application hopital Santé</p>
-{% endblock %}
+          <h3>Gerer vos Patient</h3>
+          <p>Dans le cadre de l’épidémie COVID-19, l’organisation de établissement a été modifiée afin de sécuriser la prise en charge de vos patient.</p>
+          <h1>Pour mieux vous accompagner</h1>
+          <p>Afin de mieux vous accompagner, il est possible d'appellé le 03 20 13 34 56</p>
+          <p>Ou de telecharger l'application hopital Santé</p>
+        {% else %}
+          <meta http-equiv="Refresh" content="0; url=/LeChatelet/public"/>
+        {% endif %}
+      {% endblock body %}
+
+  
