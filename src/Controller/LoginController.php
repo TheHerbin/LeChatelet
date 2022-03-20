@@ -89,6 +89,9 @@ class LoginController extends AbstractController
                         //Envoi mail verification
                         $mailer->sendEmail("<h1>Une connection via un navigateur différent de d\'habitude à votre compte go secury à etait enregistré veuiller confirmer qu\'il s\'agit bien de vous </h1> <br> Via l\'url suivant: https://localhost/verif/" + $utilisateur->getId(), "Nouvelle connection avec un navigateur different", $utilisateur->getEmail());
                         //Redirection vers ou?
+                        return $this->render('google_register_code/index.html.twig', [
+                            'controller_name' => 'MailSend',
+                        ]);
                     }
                     // if yes
                     // Lancer vérification authentificator QR code si non enregistré ou demander code si enregistré en DB
