@@ -15,6 +15,7 @@ use App\Repository\UtilisateurRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use App\Service\MailerService;
 
 
 
@@ -23,12 +24,14 @@ class LoginController extends AbstractController
     /**
      * @Route("/", name="login")
      */
-    public function index(UtilisateurRepository $utilisateurRepository, Request $request, ManagerRegistry $doctrine): Response
+    public function index(UtilisateurRepository $utilisateurRepository, Request $request, ManagerRegistry $doctrine, MailerService $mailer): Response
     {
 
         // dump($request->request->get('email'));
 
         $form = array();
+        // $mailMsg = $mailer->sendEmail();
+        // exit();
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $ldap_dn = "dc=clinique,dc=chatelet,dc=com";
