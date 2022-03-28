@@ -26,10 +26,10 @@ class LoginController extends AbstractController
      */
     public function index(UtilisateurRepository $utilisateurRepository, Request $request, ManagerRegistry $doctrine, MailerService $mailer): Response
     {
-
+        
         $ldap_dn = "dc=clinique,dc=chatelet,dc=com";
         $ldap_password = "";
-        $ldap_tree = "OU=SBSUsers,OU=Users,OU=MyBusiness,DC=myDomain,DC=local";
+        $ldap_tree = "OU=Utilisateurs,OU=IT,DC=com, DC=chatelet, DC=clinique";
         $ldap_con = ldap_connect("192.168.1.59");
 
         ldap_set_option($ldap_con, LDAP_OPT_PROTOCOL_VERSION, 3) or die('Unable to set LDAP protocol version');
@@ -50,100 +50,105 @@ class LoginController extends AbstractController
 
             if (TRUE === ldap_bind($ldap_con, $ldap_dn, $ldap_password)) {
                 echo 'Bind Success';
-                /*   $search_filter = '(cn=)';
+                   /* $search_filter = '(cn=*)';
                         $attributes = array();
                         $attributes[] = 'givenname';
                         $attributes[] = 'mail';
                         $attributes[] = 'sn';
-                        $result = ldap_search($ldap_con, $ldap_dn, $search_filter, $attributes);
+                        $result = ldap_search($ldap_con, "OU=Utilisateurs,OU=IT,DC=clinique,DC=chatelet,DC=com", $search_filter);
                         $entries = ldap_get_entries($ldap_connection, $result);
-        
-                        print_r($result);
-                        print_r($entries);
-                        */
-
+                        dump($result);
+                        dump($entries);*/
+  
                 $form['valide'] = true;
                 $email = $_POST['email'];
                 $mdp = $_POST['mdp'];
 
                 $ip = null;
+                
+                //if présence dans l'annuaire AD ici (marche pas donc comparaison DB SQL)
 
-                //if présence dans l'annuaire AD ici
-                //A FAIRE
-                //if yes 
-                //récup de l'user ciblé
                 $utilisateur = $utilisateurRepository->findOneByEmail($request->request->get('email'))[0];
-                //Comparaison des MDP hashés via l'ad et email
+                if($email !== $utilisateur->getEmail()){
+                    
+                    //if yes 
+                    //récup de l'user ciblé
+                    $utilisateur = $utilisateurRepository->findOneByEmail($request->request->get('email'))[0];
+                    //Comparaison des MDP hashés via l'ad et email
+                        //pas possible comme AD non fonctionnel
+                    //Code pour récup l'ip et navigateur en fonction du proxy/ VPN : 
+                    $ip = getIPAddress();
+                    $navigateur = get_browser_name($_SERVER['HTTP_USER_AGENT']);
 
-                //Code pour récup l'ip et navigateur en fonction du proxy/ VPN : 
-                $ip = getIPAddress();
-                $navigateur = get_browser_name($_SERVER['HTTP_USER_AGENT']);
-
-                // if $utilisateur->navigateur || $utilisateur->ip !== $ip
-                if ($ip !== $utilisateur->getIp() || $navigateur !== $utilisateur->getNavigateur()) {
-                    if ($ip !== $utilisateur->getIp() && $navigateur == $utilisateur->getNavigateur()) {
-                        //Envoi d'un mail d'avertissement
-                        $mailer->sendEmail("<h1>Une connection via un pc différent de d\'habitude à votre compte go secury à etait enregistré </h1>", "Nouvelle connection avec une ip differente", $utilisateur->getEmail());
-                    }
-                    if ($navigateur !== $utilisateur->getNavigateur()) {
-                        //Envoi mail verification
-                        $mailer->sendEmail("<h1>Une connection via un navigateur différent de d\'habitude à votre compte go secury à etait enregistré veuiller confirmer qu\'il s\'agit bien de vous </h1> <br> Via l\'url suivant: https://localhost/verif/" + $utilisateur->getId(), "Nouvelle connection avec un navigateur different", $utilisateur->getEmail());
-                        //Redirection vers ou?
-                        return $this->render('google_register_code/mailSend.html.twig', [
-                            'controller_name' => 'MailSend',
-                        ]);
-                    }
-                    // if yes
-                    // Lancer vérification authentificator QR code si non enregistré ou demander code si enregistré en DB
-
-                    $utilisateur = $utilisateurRepository->findOneByEmail($request->request->get('email'));
-                    if ($utilisateur == null) {
-                        //Il n'y a pas d'utilisateur donc en en ajoute un dans la bdd
-                        $entityManager = $doctrine->getManager();
-
-                        $user = new Utilisateur();
-                        $user->setEmail($request->request->get('email'));
-
-                        //On initialise dans la bdd le navigateur par default
-                        $user->setNavigateur(get_browser_name($_SERVER['HTTP_USER_AGENT']));
-
-                        $user->setIp(getIPAddress());
-
-                        // tell Doctrine you want to (eventually) save the Product (no queries yet)
-                        $entityManager->persist($user);
-
-                        // actually executes the queries (i.e. the INSERT query)
-                        $entityManager->flush();
-
-                        $user = $utilisateurRepository->findOneByEmail(($request->request->get('email')));
-
-                        //redirection avec parametre mail
-                        return $this->redirectToRoute('app_google_register_code', ['id' => $user[0]->getId()]);
-                    } else {
-                        //Verification google code
-
-                        if ($utilisateur[0]->getGoogleAuthenticatorSecret() == null) {
-
-                            return $this->redirectToRoute('app_google_register_code', ['id' => $utilisateur[0]->getId()]);
-                        } else {
-
-                            return $this->redirectToRoute('app_verif', ['id' => $utilisateur[0]->getId()]);
+                    // if $utilisateur->navigateur || $utilisateur->ip !== $ip
+                    if ($ip !== $utilisateur->getIp() || $navigateur !== $utilisateur->getNavigateur()) {
+                        // if yes
+                        if ($ip !== $utilisateur->getIp() && $navigateur == $utilisateur->getNavigateur()) {
+                            // if yes
+                            //Envoi d'un mail d'avertissement
+                            $mailer->sendEmail("<h3>Une connection via un pc différent de d'habitude à votre compte LeChatelet à été enregistré <h3>", "Nouvelle connection avec une ip differente", $utilisateur->getEmail());
                         }
+                        if ($navigateur !== $utilisateur->getNavigateur()) {
+                            //Envoi mail verification
+                            $url ="https://localhost/LeChatelet/public/verif/".$utilisateur->getId();
+                            $mailer->sendEmail("<h3>Une connection via un navigateur différent de d'habitude à votre compte LeChatelet à été enregistré. Veuiller confirmer qu'il s'agit bien de vous </h3> <br> Via l'url suivant: "."<a href=".$url."> Cliquez ici </a>", "Nouvelle connection avec un navigateur different", $utilisateur->getEmail());
+                            //Redirection vers ou?
+                            return $this->render('google_register_code/mailSend.html.twig', [
+                                'controller_name' => 'MailSend',
+                            ]);
+                        }
+                        
+                        // Lancer vérification authentificator QR code si non enregistré ou demander code si enregistré en DB
+
+                        $utilisateur = $utilisateurRepository->findOneByEmail($request->request->get('email'));
+                        if ($utilisateur == null) {
+                            /*//Il n'y a pas d'utilisateur donc en en ajoute un dans la bdd
+                            $entityManager = $doctrine->getManager();
+
+                            $user = new Utilisateur();
+                            $user->setEmail($request->request->get('email'));
+
+                            //On initialise dans la bdd le navigateur par default
+                            $user->setNavigateur(get_browser_name($_SERVER['HTTP_USER_AGENT']));
+
+                            $user->setIp(getIPAddress());
+
+                            // tell Doctrine you want to (eventually) save the Product (no queries yet)
+                            $entityManager->persist($user);
+
+                            // actually executes the queries (i.e. the INSERT query)
+                            $entityManager->flush();
+
+                            $user = $utilisateurRepository->findOneByEmail(($request->request->get('email')));
+
+                            //redirection avec parametre mail
+                            return $this->redirectToRoute('app_google_register_code', ['id' => $user[0]->getId()]);*/
+                        } else {
+                            //Verification google code
+
+                            if ($utilisateur[0]->getGoogleAuthenticatorSecret() == null) {
+
+                                return $this->redirectToRoute('app_google_register_code', ['id' => $utilisateur[0]->getId()]);
+                            } else {
+
+                                return $this->redirectToRoute('app_verif', ['id' => $utilisateur[0]->getId()]);
+                            }
+                        }
+                    } else {
+                        $_SESSION['USER'] = true;
+                        $isLoggedIn = $_SESSION['USER'];
+                        return $this->render('home/index.html.twig', array(
+                            'controller_name' => 'HomeController',
+                            'isLogged' => $isLoggedIn,
+                        ));
                     }
-                } else {
-                    $_SESSION['USER'] = true;
-                    $isLoggedIn = $_SESSION['USER'];
-                    return $this->render('home/index.html.twig', array(
-                        'controller_name' => 'HomeController',
-                        'isLogged' => $isLoggedIn
-                    ));
-                }
-                // if no
-                // Rediriger vers l'accueil avec les variables session pour permettre l'affichage des infos utilisateurs.
+                }else{
+                
 
                 // if no 
-                //return $this->redirect('https://google.fr');
+                
                 // blacklist IP
+                }
             } else {
                 return $this->redirectToRoute('maintenance');
             }

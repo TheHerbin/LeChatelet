@@ -13,8 +13,6 @@ class HomeController extends AbstractController
      */
     public function index(): Response
     {
-
-
         //returns the view 
         $isLoggedIn = isset($_SESSION['USER']);
         //var_dump($isLoggedIn);
@@ -23,5 +21,14 @@ class HomeController extends AbstractController
             'controller_name' => 'HomeController',
             'isLogged' => $isLoggedIn
         ]);
+    }
+
+    /**
+     * @Route("/deconnection", name="deconnection")
+     */
+    public function deconnection(): Response
+    {
+        session_unset();
+        return $this->redirectToRoute("login"); 
     }
 }

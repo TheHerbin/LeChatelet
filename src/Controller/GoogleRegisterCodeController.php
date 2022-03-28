@@ -49,6 +49,7 @@ class GoogleRegisterCodeController extends AbstractController
      */
     public function validation(int $id, UtilisateurRepository $utilisateur, Request $request, ManagerRegistry $doctrine): Response
     {
+        unset($_SESSION['USER']);
         $user = $utilisateur->find($id);
         $code = $request->request->get('codeGoogle');
         if ($user->getGoogleAuthenticatorSecret() == null) {
@@ -56,17 +57,18 @@ class GoogleRegisterCodeController extends AbstractController
 
             $user->setGoogleAuthenticatorSecret($code);
             $entityManager->persist($user);
-
+            
             // actually executes the queries (i.e. the INSERT query)
             $entityManager->flush();
         } else {
             if ($user->getGoogleAuthenticatorSecret() == $code) {
+                $_SESSION['USER'] = true;
                 $this->redirectToRoute("home");
             } else {
                 $this->redirectToRoute("app_verif", ['id' => $id]);
             }
         }
-
+        $_SESSION['USER'] = true;
         return $this->redirectToRoute("home");
     }
 
