@@ -22,7 +22,7 @@ use App\Service\MailerService;
 class LoginController extends AbstractController
 {
     /**
-     * @Route("/", name="login")
+     * @Route("/login", name="login")
      */
     public function index(UtilisateurRepository $utilisateurRepository, Request $request, ManagerRegistry $doctrine, MailerService $mailer): Response
     {
